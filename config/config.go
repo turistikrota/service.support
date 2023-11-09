@@ -37,6 +37,13 @@ type Redis struct {
 	Db   int    `env:"REDIS_DB"`
 }
 
+type CacheRedis struct {
+	Host string `env:"REDIS_CACHE_HOST"`
+	Port string `env:"REDIS_CACHE_PORT"`
+	Pw   string `env:"REDIS_CACHE_PASSWORD"`
+	Db   int    `env:"REDIS_CACHE_DB"`
+}
+
 type HttpHeaders struct {
 	AllowedOrigins   string `env:"CORS_ALLOWED_ORIGINS" envDefault:"*"`
 	AllowedMethods   string `env:"CORS_ALLOWED_METHODS" envDefault:"GET,POST,PUT,DELETE,OPTIONS"`
@@ -54,6 +61,11 @@ type Session struct {
 	Topic string `env:"SESSION_TOPIC"`
 }
 
+type Nats struct {
+	Url     string   `env:"NATS_URL" envDefault:"nats://localhost:4222"`
+	Streams []string `env:"NATS_STREAMS" envDefault:""`
+}
+
 type RSA struct {
 	PrivateKeyFile string `env:"RSA_PRIVATE_KEY"`
 	PublicKeyFile  string `env:"RSA_PUBLIC_KEY"`
@@ -68,7 +80,9 @@ type App struct {
 	HttpHeaders HttpHeaders
 	I18n        I18n
 	Session     Session
+	Nats        Nats
 	RSA         RSA
 	Redis       Redis
+	CacheRedis  CacheRedis
 	TokenSrv    TokenSrv
 }
