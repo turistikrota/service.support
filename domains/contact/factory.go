@@ -17,9 +17,9 @@ func (f Factory) IsZero() bool {
 }
 
 type NewConfig struct {
-	Subject string `json:"subject" bson:"subject"`
-	Email   string `json:"email" bson:"email"`
-	Message string `json:"message" bson:"message"`
+	Subject string `json:"subject"`
+	Email   string `json:"email"`
+	Message string `json:"message"`
 }
 
 func (f Factory) New(cnf NewConfig) *Entity {

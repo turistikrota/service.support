@@ -17,10 +17,10 @@ func (f Factory) IsZero() bool {
 }
 
 type NewConfig struct {
-	OS      string `json:"os" bson:"os"`
-	Version string `json:"version" bson:"version"`
-	User    *User  `json:"user" bson:"user"`
-	Message string `json:"message" bson:"message"`
+	OS      string `json:"os"`
+	Version string `json:"version"`
+	User    *User  `json:"user"`
+	Message string `json:"message"`
 }
 
 func (f Factory) New(cnf NewConfig) *Entity {
