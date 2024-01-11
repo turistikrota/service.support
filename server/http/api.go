@@ -91,7 +91,18 @@ func (h srv) FeedbackList(ctx *fiber.Ctx) error {
 }
 
 func (h srv) SupportAdminAddMsg(ctx *fiber.Ctx) error {
-	return nil
+	detail := command.SupportDetailCmd{}
+	h.parseParams(ctx, &detail)
+	cmd := command.SupportAdminAddMsgCmd{}
+	h.parseBody(ctx, &cmd)
+	cmd.UUID = detail.UUID
+	cmd.UserUUID = current_user.Parse(ctx).UUID
+	res, err := h.app.Commands.SupportAdminAddMsg(ctx.Context(), cmd)
+	if err != nil {
+		l, a := i18n.GetLanguagesInContext(*h.i18n, ctx)
+		return result.Error(h.i18n.TranslateFromError(*err, l, a))
+	}
+	return result.SuccessDetail(Messages.Success.Ok, res)
 }
 
 func (h srv) SupportAdminClose(ctx *fiber.Ctx) error {
