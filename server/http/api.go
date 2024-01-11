@@ -128,11 +128,28 @@ func (h srv) SupportAdminDelete(ctx *fiber.Ctx) error {
 }
 
 func (h srv) SupportAdminRemoveMsg(ctx *fiber.Ctx) error {
-	return nil
+	cmd := command.SupportAdminRemoveMsgCmd{}
+	h.parseParams(ctx, &cmd)
+	res, err := h.app.Commands.SupportAdminRemoveMsg(ctx.Context(), cmd)
+	if err != nil {
+		l, a := i18n.GetLanguagesInContext(*h.i18n, ctx)
+		return result.Error(h.i18n.TranslateFromError(*err, l, a))
+	}
+	return result.SuccessDetail(Messages.Success.Ok, res)
 }
 
 func (h srv) SupportAdminUpdate(ctx *fiber.Ctx) error {
-	return nil
+	detail := command.SupportDetailCmd{}
+	h.parseParams(ctx, &detail)
+	cmd := command.SupportAdminUpdateCmd{}
+	h.parseBody(ctx, &cmd)
+	cmd.UUID = detail.UUID
+	res, err := h.app.Commands.SupportAdminUpdate(ctx.Context(), cmd)
+	if err != nil {
+		l, a := i18n.GetLanguagesInContext(*h.i18n, ctx)
+		return result.Error(h.i18n.TranslateFromError(*err, l, a))
+	}
+	return result.SuccessDetail(Messages.Success.Ok, res)
 }
 
 func (h srv) SupportCreate(ctx *fiber.Ctx) error {
