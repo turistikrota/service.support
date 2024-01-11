@@ -22,7 +22,7 @@ type WithUser struct {
 type Repo interface {
 	// admin actions
 	AdminFilter(ctx context.Context, filter FilterEntity, listConfig list.Config) (*list.Result[*Entity], *i18np.Error)
-	AdminGet(ctx context.Context, uuid string) (*Entity, bool, *i18np.Error)
+	AdminGet(ctx context.Context, uuid string) (*Entity, *i18np.Error)
 	AdminClose(ctx context.Context, uuid string) *i18np.Error
 	AdminDelete(ctx context.Context, uuid string) *i18np.Error
 	AdminAddMessage(ctx context.Context, uuid string, adminId string, message string) *i18np.Error
@@ -34,7 +34,7 @@ type Repo interface {
 	AddMessage(ctx context.Context, uuid string, message string, user WithUser) *i18np.Error
 	Close(ctx context.Context, uuid string, user WithUser) *i18np.Error
 	Delete(ctx context.Context, uuid string, user WithUser) *i18np.Error
-	Get(ctx context.Context, uuid string, user WithUser) (*Entity, bool, *i18np.Error)
+	Get(ctx context.Context, uuid string, user WithUser) (*Entity, *i18np.Error)
 	Filter(ctx context.Context, user WithUser, filter FilterEntity, listConfig list.Config) (*list.Result[*Entity], *i18np.Error)
 }
 
@@ -80,22 +80,22 @@ func (r *repo) AdminFilter(ctx context.Context, filter FilterEntity, listConfig 
 	}, nil
 }
 
-func (r *repo) AdminGet(ctx context.Context, uuid string) (*Entity, bool, *i18np.Error) {
+func (r *repo) AdminGet(ctx context.Context, uuid string) (*Entity, *i18np.Error) {
 	id, err := mongo2.TransformId(uuid)
 	if err != nil {
-		return nil, false, r.factory.Errors.InvalidUUID()
+		return nil, r.factory.Errors.InvalidUUID()
 	}
 	filter := bson.M{
 		fields.UUID: id,
 	}
 	res, notFound, _err := r.helper.GetFilter(ctx, filter)
 	if _err != nil {
-		return nil, false, _err
+		return nil, _err
 	}
 	if notFound {
-		return nil, true, nil
+		return nil, r.factory.Errors.NotFound()
 	}
-	return *res, false, nil
+	return *res, nil
 }
 
 func (r *repo) AdminClose(ctx context.Context, uuid string) *i18np.Error {
@@ -266,10 +266,10 @@ func (r *repo) Delete(ctx context.Context, uuid string, user WithUser) *i18np.Er
 	return r.helper.UpdateOne(ctx, filter, update)
 }
 
-func (r *repo) Get(ctx context.Context, uuid string, user WithUser) (*Entity, bool, *i18np.Error) {
+func (r *repo) Get(ctx context.Context, uuid string, user WithUser) (*Entity, *i18np.Error) {
 	id, err := mongo2.TransformId(uuid)
 	if err != nil {
-		return nil, false, r.factory.Errors.InvalidUUID()
+		return nil, r.factory.Errors.InvalidUUID()
 	}
 	filter := bson.M{
 		fields.UUID:                id,
@@ -278,12 +278,12 @@ func (r *repo) Get(ctx context.Context, uuid string, user WithUser) (*Entity, bo
 	}
 	res, notFound, _err := r.helper.GetFilter(ctx, filter)
 	if _err != nil {
-		return nil, false, _err
+		return nil, _err
 	}
 	if notFound {
-		return nil, true, nil
+		return nil, r.factory.Errors.NotFound()
 	}
-	return *res, false, nil
+	return *res, nil
 }
 
 func (r *repo) Filter(ctx context.Context, user WithUser, filter FilterEntity, listConfig list.Config) (*list.Result[*Entity], *i18np.Error) {

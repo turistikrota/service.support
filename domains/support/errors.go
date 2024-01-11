@@ -5,6 +5,7 @@ import "github.com/cilloparch/cillop/i18np"
 type Errors interface {
 	Failed(string) *i18np.Error
 	InvalidUUID() *i18np.Error
+	NotFound() *i18np.Error
 }
 
 type supportErrors struct{}
@@ -21,4 +22,8 @@ func (e *supportErrors) Failed(operation string) *i18np.Error {
 
 func (e *supportErrors) InvalidUUID() *i18np.Error {
 	return i18np.NewError(i18nMessages.InvalidUUID)
+}
+
+func (e *supportErrors) NotFound() *i18np.Error {
+	return i18np.NewError(i18nMessages.NotFound)
 }
