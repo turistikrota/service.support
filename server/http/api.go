@@ -89,3 +89,55 @@ func (h srv) FeedbackList(ctx *fiber.Ctx) error {
 	}
 	return result.SuccessDetail(Messages.Success.Ok, res)
 }
+
+func (h srv) SupportAdminAddMsg(ctx *fiber.Ctx) error {
+	return nil
+}
+
+func (h srv) SupportAdminClose(ctx *fiber.Ctx) error {
+	return nil
+}
+
+func (h srv) SupportAdminDelete(ctx *fiber.Ctx) error {
+	return nil
+}
+
+func (h srv) SupportAdminRemoveMsg(ctx *fiber.Ctx) error {
+	return nil
+}
+
+func (h srv) SupportAdminUpdate(ctx *fiber.Ctx) error {
+	return nil
+}
+
+func (h srv) SupportCreate(ctx *fiber.Ctx) error {
+	return nil
+}
+
+func (h srv) SupportAddMsg(ctx *fiber.Ctx) error {
+	return nil
+}
+
+func (h srv) SupportClose(ctx *fiber.Ctx) error {
+	return nil
+}
+
+func (h srv) SupportDelete(ctx *fiber.Ctx) error {
+	return nil
+}
+
+func (h srv) SupportAdminFilter(ctx *fiber.Ctx) error {
+	return nil
+}
+
+func (h srv) SupportAdminGet(ctx *fiber.Ctx) error {
+	return nil
+}
+
+func (h srv) SupportGet(ctx *fiber.Ctx) error {
+	return nil
+}
+
+func (h srv) SupportFilter(ctx *fiber.Ctx) error {
+	return nil
+}
