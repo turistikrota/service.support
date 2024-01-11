@@ -9,7 +9,7 @@ import (
 )
 
 type SupportAdminCloseCmd struct {
-	UUID string `json:"-"`
+	UUID string `params:"uuid" validate:"required,object_id"`
 }
 
 type SupportAdminCloseRes struct{}

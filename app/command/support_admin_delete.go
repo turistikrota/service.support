@@ -9,7 +9,7 @@ import (
 )
 
 type SupportAdminDeleteCmd struct {
-	UUID string `json:"-"`
+	UUID string `params:"uuid" validate:"required,object_id"`
 }
 
 type SupportAdminDeleteRes struct{}
