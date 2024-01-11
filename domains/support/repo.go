@@ -6,6 +6,7 @@ import (
 
 	"github.com/cilloparch/cillop/i18np"
 	"github.com/cilloparch/cillop/types/list"
+	"github.com/google/uuid"
 	mongo2 "github.com/turistikrota/service.shared/db/mongo"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -24,8 +25,8 @@ type Repo interface {
 	AdminClose(ctx context.Context, uuid string) *i18np.Error
 	AdminDelete(ctx context.Context, uuid string) *i18np.Error
 	AdminAddMessage(ctx context.Context, uuid string, adminId string, message string) *i18np.Error
-	AdminUpdate(ctx context.Context, uuid string, subject string, interests []string) *i18np.Error
-	AdminRemoveMessage(ctx context.Context, uuid string, messageId string) *i18np.Error
+	AdminUpdate(ctx context.Context, uuid string, subject string) *i18np.Error
+	AdminRemoveMessage(ctx context.Context, uuid string, messageId uuid.UUID) *i18np.Error
 
 	// user actions
 	Create(ctx context.Context, entity *Entity) (*Entity, *i18np.Error)
@@ -132,16 +133,62 @@ func (r *repo) AdminDelete(ctx context.Context, uuid string) *i18np.Error {
 	return r.helper.UpdateOne(ctx, filter, update)
 }
 
-func (r *repo) AdminAddMessage(ctx context.Context, uuid string, adminId string, message string) *i18np.Error {
-	return nil
+func (r *repo) AdminAddMessage(ctx context.Context, supportId string, adminId string, message string) *i18np.Error {
+	id, err := mongo2.TransformId(supportId)
+	if err != nil {
+		return r.factory.Errors.InvalidUUID()
+	}
+	filter := bson.M{
+		fields.UUID: id,
+	}
+	update := bson.M{
+		"$addToSet": bson.M{
+			fields.Messages: bson.M{
+				messageFields.UUID:         uuid.New(),
+				messageFields.InterestUUID: adminId,
+				messageFields.Text:         message,
+				messageFields.IsAdmin:      true,
+				messageFields.IsDeleted:    false,
+				messageFields.Date:         time.Now(),
+			},
+		},
+	}
+	return r.helper.UpdateOne(ctx, filter, update)
 }
 
-func (r *repo) AdminUpdate(ctx context.Context, uuid string, subject string, interests []string) *i18np.Error {
-	return nil
+func (r *repo) AdminUpdate(ctx context.Context, uuid string, subject string) *i18np.Error {
+	id, err := mongo2.TransformId(uuid)
+	if err != nil {
+		return r.factory.Errors.InvalidUUID()
+	}
+	filter := bson.M{
+		fields.UUID: id,
+	}
+	update := bson.M{
+		"$set": bson.M{
+			fields.Subject: subject,
+		},
+	}
+	return r.helper.UpdateOne(ctx, filter, update)
 }
 
-func (r *repo) AdminRemoveMessage(ctx context.Context, uuid string, messageId string) *i18np.Error {
-	return nil
+func (r *repo) AdminRemoveMessage(ctx context.Context, supportId string, messageId uuid.UUID) *i18np.Error {
+	id, err := mongo2.TransformId(supportId)
+	if err != nil {
+		return r.factory.Errors.InvalidUUID()
+	}
+	filter := bson.M{
+		fields.UUID:                      id,
+		messageField(messageFields.UUID): messageId,
+	}
+	update := bson.M{
+		"$pull": bson.M{
+			fields.Messages: bson.M{
+				messageFields.UUID: messageId,
+			},
+		},
+	}
+	return r.helper.UpdateOne(ctx, filter, update)
 }
 
 func (r *repo) Create(ctx context.Context, entity *Entity) (*Entity, *i18np.Error) {
