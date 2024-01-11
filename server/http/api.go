@@ -9,6 +9,7 @@ import (
 	"github.com/turistikrota/service.support/app/command"
 	"github.com/turistikrota/service.support/app/query"
 	"github.com/turistikrota/service.support/domains/feedback"
+	"github.com/turistikrota/service.support/domains/support"
 	"github.com/turistikrota/service.support/pkg/utils"
 )
 
@@ -208,7 +209,19 @@ func (h srv) SupportDelete(ctx *fiber.Ctx) error {
 }
 
 func (h srv) SupportAdminFilter(ctx *fiber.Ctx) error {
-	return nil
+	pagi := utils.Pagination{}
+	h.parseQuery(ctx, &pagi)
+	filter := support.FilterEntity{}
+	h.parseQuery(ctx, &filter)
+	query := query.SupportAdminFilterQuery{}
+	query.Pagination = &pagi
+	query.FilterEntity = &filter
+	res, err := h.app.Queries.SupportAdminFilter(ctx.Context(), query)
+	if err != nil {
+		l, a := i18n.GetLanguagesInContext(*h.i18n, ctx)
+		return result.ErrorDetail(h.i18n.TranslateFromError(*err, l, a), err)
+	}
+	return result.SuccessDetail(Messages.Success.Ok, res)
 }
 
 func (h srv) SupportAdminGet(ctx *fiber.Ctx) error {
@@ -220,5 +233,19 @@ func (h srv) SupportGet(ctx *fiber.Ctx) error {
 }
 
 func (h srv) SupportFilter(ctx *fiber.Ctx) error {
-	return nil
+	pagi := utils.Pagination{}
+	h.parseQuery(ctx, &pagi)
+	filter := support.FilterEntity{}
+	h.parseQuery(ctx, &filter)
+	query := query.SupportFilterQuery{}
+	query.Pagination = &pagi
+	query.FilterEntity = &filter
+	query.UserUUID = current_user.Parse(ctx).UUID
+	query.UserName = current_account.Parse(ctx).Name
+	res, err := h.app.Queries.SupportFilter(ctx.Context(), query)
+	if err != nil {
+		l, a := i18n.GetLanguagesInContext(*h.i18n, ctx)
+		return result.ErrorDetail(h.i18n.TranslateFromError(*err, l, a), err)
+	}
+	return result.SuccessDetail(Messages.Success.Ok, res)
 }
