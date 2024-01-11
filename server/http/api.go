@@ -153,11 +153,32 @@ func (h srv) SupportAdminUpdate(ctx *fiber.Ctx) error {
 }
 
 func (h srv) SupportCreate(ctx *fiber.Ctx) error {
-	return nil
+	cmd := command.SupportCreateCmd{}
+	h.parseBody(ctx, &cmd)
+	cmd.UserUUID = current_user.Parse(ctx).UUID
+	cmd.UserName = current_account.Parse(ctx).Name
+	res, err := h.app.Commands.SupportCreate(ctx.Context(), cmd)
+	if err != nil {
+		l, a := i18n.GetLanguagesInContext(*h.i18n, ctx)
+		return result.ErrorDetail(h.i18n.TranslateFromError(*err, l, a), err)
+	}
+	return result.SuccessDetail(Messages.Success.Ok, res)
 }
 
 func (h srv) SupportAddMsg(ctx *fiber.Ctx) error {
-	return nil
+	detail := command.SupportDetailCmd{}
+	h.parseParams(ctx, &detail)
+	cmd := command.SupportAddMsgCmd{}
+	h.parseBody(ctx, &cmd)
+	cmd.UUID = detail.UUID
+	cmd.UserUUID = current_user.Parse(ctx).UUID
+	cmd.UserName = current_account.Parse(ctx).Name
+	res, err := h.app.Commands.SupportAddMsg(ctx.Context(), cmd)
+	if err != nil {
+		l, a := i18n.GetLanguagesInContext(*h.i18n, ctx)
+		return result.Error(h.i18n.TranslateFromError(*err, l, a))
+	}
+	return result.SuccessDetail(Messages.Success.Ok, res)
 }
 
 func (h srv) SupportClose(ctx *fiber.Ctx) error {
