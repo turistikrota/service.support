@@ -287,7 +287,11 @@ func (r *repo) Get(ctx context.Context, uuid string, user WithUser) (*Entity, *i
 }
 
 func (r *repo) Filter(ctx context.Context, user WithUser, filter FilterEntity, listConfig list.Config) (*list.Result[*Entity], *i18np.Error) {
-	filters := r.filterToBson(filter)
+	baseFilter := bson.M{
+		userField(userFields.UUID): user.UUID,
+		userField(userFields.Name): user.Name,
+	}
+	filters := r.filterToBson(filter, baseFilter)
 	l, err := r.helper.GetListFilter(ctx, filters, r.listOptions(listConfig))
 	if err != nil {
 		return nil, err
@@ -296,10 +300,7 @@ func (r *repo) Filter(ctx context.Context, user WithUser, filter FilterEntity, l
 	if _err != nil {
 		return nil, _err
 	}
-	total, _err := r.helper.GetFilterCount(ctx, bson.M{
-		userField(userFields.UUID): user.UUID,
-		userField(userFields.Name): user.Name,
-	})
+	total, _err := r.helper.GetFilterCount(ctx, baseFilter)
 	if _err != nil {
 		return nil, _err
 	}
