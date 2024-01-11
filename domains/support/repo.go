@@ -2,6 +2,7 @@ package support
 
 import (
 	"context"
+	"time"
 
 	"github.com/cilloparch/cillop/i18np"
 	"github.com/cilloparch/cillop/types/list"
@@ -19,7 +20,7 @@ type WithUser struct {
 type Repo interface {
 	// admin actions
 	AdminFilter(ctx context.Context, filter FilterEntity, listConfig list.Config) (*list.Result[*Entity], *i18np.Error)
-	AdminGet(ctx context.Context, uuid string) (*Entity, *i18np.Error)
+	AdminGet(ctx context.Context, uuid string) (*Entity, bool, *i18np.Error)
 	AdminClose(ctx context.Context, uuid string) *i18np.Error
 	AdminDelete(ctx context.Context, uuid string) *i18np.Error
 	AdminAddMessage(ctx context.Context, uuid string, adminId string, message string) *i18np.Error
@@ -77,16 +78,58 @@ func (r *repo) AdminFilter(ctx context.Context, filter FilterEntity, listConfig 
 	}, nil
 }
 
-func (r *repo) AdminGet(ctx context.Context, uuid string) (*Entity, *i18np.Error) {
-	return nil, nil
+func (r *repo) AdminGet(ctx context.Context, uuid string) (*Entity, bool, *i18np.Error) {
+	id, err := mongo2.TransformId(uuid)
+	if err != nil {
+		return nil, false, r.factory.Errors.InvalidUUID()
+	}
+	filter := bson.M{
+		fields.UUID: id,
+	}
+	res, notFound, _err := r.helper.GetFilter(ctx, filter)
+	if _err != nil {
+		return nil, false, _err
+	}
+	if notFound {
+		return nil, true, nil
+	}
+	return *res, false, nil
 }
 
 func (r *repo) AdminClose(ctx context.Context, uuid string) *i18np.Error {
-	return nil
+	id, err := mongo2.TransformId(uuid)
+	if err != nil {
+		return r.factory.Errors.InvalidUUID()
+	}
+	filter := bson.M{
+		fields.UUID: id,
+	}
+	update := bson.M{
+		"$set": bson.M{
+			fields.IsUserClosed: false,
+			fields.State:        States.Closed,
+			fields.ClosedAt:     time.Now(),
+		},
+	}
+	return r.helper.UpdateOne(ctx, filter, update)
 }
 
 func (r *repo) AdminDelete(ctx context.Context, uuid string) *i18np.Error {
-	return nil
+	id, err := mongo2.TransformId(uuid)
+	if err != nil {
+		return r.factory.Errors.InvalidUUID()
+	}
+	filter := bson.M{
+		fields.UUID: id,
+	}
+	update := bson.M{
+		"$set": bson.M{
+			fields.IsUserClosed: false,
+			fields.State:        States.Deleted,
+			fields.ClosedAt:     nil,
+		},
+	}
+	return r.helper.UpdateOne(ctx, filter, update)
 }
 
 func (r *repo) AdminAddMessage(ctx context.Context, uuid string, adminId string, message string) *i18np.Error {
