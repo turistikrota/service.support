@@ -153,6 +153,9 @@ func (r *repo) AdminAddMessage(ctx context.Context, supportId string, adminId st
 				messageFields.Date:         time.Now(),
 			},
 		},
+		"$set": bson.M{
+			fields.State: States.Answered,
+		},
 	}
 	return r.helper.UpdateOne(ctx, filter, update)
 }
@@ -221,6 +224,9 @@ func (r *repo) AddMessage(ctx context.Context, supportId string, message string,
 				messageFields.IsDeleted:    false,
 				messageFields.Date:         time.Now(),
 			},
+		},
+		"$set": bson.M{
+			fields.State: States.Open,
 		},
 	}
 	return r.helper.UpdateOne(ctx, filter, update)
