@@ -73,6 +73,15 @@ func (h srv) Listen() error {
 			admin.Patch("/feedback/:uuid", h.adminRoute(config.Roles.Support.ReadFeedback), h.wrapWithTimeout(h.FeedbackRead))
 			admin.Patch("/contact/:uuid", h.adminRoute(config.Roles.Support.ReadContact), h.wrapWithTimeout(h.ContactRead))
 
+			// admin support routes
+			admin.Get("/support", h.adminRoute(config.Roles.Support.SupportSuper, config.Roles.Support.SupportList), h.wrapWithTimeout(h.SupportAdminFilter))
+			admin.Get("/support/:uuid", h.adminRoute(config.Roles.Support.SupportSuper, config.Roles.Support.SupportView), h.wrapWithTimeout(h.SupportAdminGet))
+			admin.Post("/support/:uuid", h.adminRoute(config.Roles.Support.SupportSuper, config.Roles.Support.SupportAddMsg), h.wrapWithTimeout(h.SupportAdminAddMsg))
+			admin.Delete("/support/:uuid/:message_id", h.adminRoute(config.Roles.Support.SupportSuper, config.Roles.Support.SupportRemoveMsg), h.wrapWithTimeout(h.SupportAdminRemoveMsg))
+			admin.Patch("/support/:uuid/close", h.adminRoute(config.Roles.Support.SupportSuper, config.Roles.Support.SupportClose), h.wrapWithTimeout(h.SupportAdminClose))
+			admin.Patch("/support/:uuid", h.adminRoute(config.Roles.Support.SupportSuper, config.Roles.Support.SupportUpdate), h.wrapWithTimeout(h.SupportAdminUpdate))
+			admin.Delete("/support/:uuid", h.adminRoute(config.Roles.Support.SupportSuper, config.Roles.Support.SupportDelete), h.wrapWithTimeout(h.SupportAdminDelete))
+
 			// public routes
 			router.Post("/contact", h.rateLimit(), h.wrapWithTimeout(h.ContactCreate))
 			router.Post("/feedback", h.currentUserAccess(), h.safeCurrentAccountAccess(), h.rateLimit(), h.wrapWithTimeout(h.FeedbackCreate))
