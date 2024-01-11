@@ -73,9 +73,26 @@ func (h srv) Listen() error {
 			admin.Patch("/feedback/:uuid", h.adminRoute(config.Roles.Support.ReadFeedback), h.wrapWithTimeout(h.FeedbackRead))
 			admin.Patch("/contact/:uuid", h.adminRoute(config.Roles.Support.ReadContact), h.wrapWithTimeout(h.ContactRead))
 
+			// admin support routes
+			admin.Get("/", h.adminRoute(config.Roles.Support.SupportSuper, config.Roles.Support.SupportList), h.wrapWithTimeout(h.SupportAdminFilter))
+			admin.Get("/:uuid", h.adminRoute(config.Roles.Support.SupportSuper, config.Roles.Support.SupportView), h.wrapWithTimeout(h.SupportAdminGet))
+			admin.Post("/:uuid", h.adminRoute(config.Roles.Support.SupportSuper, config.Roles.Support.SupportAddMsg), h.wrapWithTimeout(h.SupportAdminAddMsg))
+			admin.Delete("/:uuid/:message_id", h.adminRoute(config.Roles.Support.SupportSuper, config.Roles.Support.SupportRemoveMsg), h.wrapWithTimeout(h.SupportAdminRemoveMsg))
+			admin.Patch("/:uuid/close", h.adminRoute(config.Roles.Support.SupportSuper, config.Roles.Support.SupportClose), h.wrapWithTimeout(h.SupportAdminClose))
+			admin.Patch("/:uuid", h.adminRoute(config.Roles.Support.SupportSuper, config.Roles.Support.SupportUpdate), h.wrapWithTimeout(h.SupportAdminUpdate))
+			admin.Delete("/:uuid", h.adminRoute(config.Roles.Support.SupportSuper, config.Roles.Support.SupportDelete), h.wrapWithTimeout(h.SupportAdminDelete))
+
 			// public routes
 			router.Post("/contact", h.rateLimit(), h.wrapWithTimeout(h.ContactCreate))
 			router.Post("/feedback", h.currentUserAccess(), h.safeCurrentAccountAccess(), h.rateLimit(), h.wrapWithTimeout(h.FeedbackCreate))
+
+			// support routes
+			router.Post("/", h.currentUserAccess(), h.requiredAccess(), h.currentAccountAccess(), h.rateLimit(), h.wrapWithTimeout(h.SupportCreate))
+			router.Get("/", h.currentUserAccess(), h.requiredAccess(), h.currentAccountAccess(), h.rateLimit(), h.wrapWithTimeout(h.SupportFilter))
+			router.Get("/:uuid", h.currentUserAccess(), h.requiredAccess(), h.currentAccountAccess(), h.rateLimit(), h.wrapWithTimeout(h.SupportGet))
+			router.Post("/:uuid", h.currentUserAccess(), h.requiredAccess(), h.currentAccountAccess(), h.rateLimit(), h.wrapWithTimeout(h.SupportAddMsg))
+			router.Patch("/:uuid/close", h.currentUserAccess(), h.requiredAccess(), h.currentAccountAccess(), h.rateLimit(), h.wrapWithTimeout(h.SupportClose))
+			router.Delete("/:uuid", h.currentUserAccess(), h.requiredAccess(), h.currentAccountAccess(), h.rateLimit(), h.wrapWithTimeout(h.SupportDelete))
 
 			return router
 		},

@@ -3,16 +3,15 @@ package support
 import "time"
 
 type Entity struct {
-	UUID         string      `json:"uuid" bson:"_id,omitempty"`
-	User         *User       `json:"user" bson:"user"`
-	Interests    []*Interest `json:"interests" bson:"interests"`
-	Subject      string      `json:"subject" bson:"subject"`
-	Messages     []*Message  `json:"messages" bson:"messages"`
-	State        State       `json:"state" bson:"state"`
-	IsUserClosed bool        `json:"isUserClosed" bson:"is_user_closed"`
-	ClosedAt     *time.Time  `json:"closedAt" bson:"closed_at"`
-	UpdatedAt    *time.Time  `json:"updatedAt" bson:"updated_at"`
-	CreatedAt    time.Time   `json:"createdAt" bson:"created_at"`
+	UUID         string     `json:"uuid" bson:"_id,omitempty"`
+	User         *User      `json:"user" bson:"user"`
+	Subject      string     `json:"subject" bson:"subject"`
+	Messages     []*Message `json:"messages" bson:"messages"`
+	State        State      `json:"state" bson:"state"`
+	IsUserClosed bool       `json:"isUserClosed" bson:"is_user_closed"`
+	ClosedAt     *time.Time `json:"closedAt" bson:"closed_at"`
+	UpdatedAt    *time.Time `json:"updatedAt" bson:"updated_at"`
+	CreatedAt    time.Time  `json:"createdAt" bson:"created_at"`
 }
 
 type User struct {
@@ -26,12 +25,12 @@ type Interest struct {
 }
 
 type Message struct {
-	UUID     string    `json:"uuid" bson:"uuid"`
-	Text     string    `json:"text" bson:"text"`
-	Interest *Interest `json:"interest" bson:"interest"`
-	User     *User     `json:"user" bson:"user"`
-	IsAdmin  bool      `json:"is_admin" bson:"is_admin"`
-	Date     time.Time `json:"date" bson:"date"`
+	UUID         string    `json:"uuid" bson:"uuid"`
+	InterestUUID string    `json:"interest_uuid,omitempty" bson:"interest_uuid,omitempty"`
+	Text         string    `json:"text" bson:"text"`
+	IsAdmin      bool      `json:"is_admin" bson:"is_admin"`
+	IsDeleted    bool      `json:"is_deleted" bson:"is_deleted"`
+	Date         time.Time `json:"date" bson:"date"`
 }
 
 type State string
