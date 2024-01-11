@@ -27,7 +27,7 @@ type Repo interface {
 	AdminDelete(ctx context.Context, uuid string) *i18np.Error
 	AdminAddMessage(ctx context.Context, uuid string, adminId string, message string) *i18np.Error
 	AdminUpdate(ctx context.Context, uuid string, subject string) *i18np.Error
-	AdminRemoveMessage(ctx context.Context, uuid string, messageId uuid.UUID) *i18np.Error
+	AdminRemoveMessage(ctx context.Context, uuid string, messageId string) *i18np.Error
 
 	// user actions
 	Create(ctx context.Context, entity *Entity) (*Entity, *i18np.Error)
@@ -173,7 +173,7 @@ func (r *repo) AdminUpdate(ctx context.Context, uuid string, subject string) *i1
 	return r.helper.UpdateOne(ctx, filter, update)
 }
 
-func (r *repo) AdminRemoveMessage(ctx context.Context, supportId string, messageId uuid.UUID) *i18np.Error {
+func (r *repo) AdminRemoveMessage(ctx context.Context, supportId string, messageId string) *i18np.Error {
 	id, err := mongo2.TransformId(supportId)
 	if err != nil {
 		return r.factory.Errors.InvalidUUID()

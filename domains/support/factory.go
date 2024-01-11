@@ -1,5 +1,11 @@
 package support
 
+import (
+	"time"
+
+	"github.com/google/uuid"
+)
+
 type Factory struct {
 	Errors Errors
 }
@@ -12,4 +18,34 @@ func NewFactory() Factory {
 
 func (f Factory) IsZero() bool {
 	return f.Errors == nil
+}
+
+type NewConfig struct {
+	User    *User
+	Subject string
+	Message string
+}
+
+func (f Factory) New(cnf NewConfig) *Entity {
+	t := time.Now()
+	firstMessage := &Message{
+		UUID:         uuid.New().String(),
+		InterestUUID: cnf.User.UUID,
+		Text:         cnf.Message,
+		IsAdmin:      false,
+		IsDeleted:    false,
+		Date:         t,
+	}
+	return &Entity{
+		User:    cnf.User,
+		Subject: cnf.Subject,
+		Messages: []*Message{
+			firstMessage,
+		},
+		State:        States.Open,
+		IsUserClosed: false,
+		ClosedAt:     nil,
+		UpdatedAt:    &t,
+		CreatedAt:    t,
+	}
 }
