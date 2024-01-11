@@ -145,7 +145,7 @@ func (r *repo) AdminAddMessage(ctx context.Context, supportId string, adminId st
 	update := bson.M{
 		"$addToSet": bson.M{
 			fields.Messages: bson.M{
-				messageFields.UUID:         uuid.New(),
+				messageFields.UUID:         uuid.New().String(),
 				messageFields.InterestUUID: adminId,
 				messageFields.Text:         message,
 				messageFields.IsAdmin:      true,
@@ -214,7 +214,7 @@ func (r *repo) AddMessage(ctx context.Context, supportId string, message string,
 	update := bson.M{
 		"$addToSet": bson.M{
 			fields.Messages: bson.M{
-				messageFields.UUID:         uuid.New(),
+				messageFields.UUID:         uuid.New().String(),
 				messageFields.InterestUUID: user.UUID,
 				messageFields.Text:         message,
 				messageFields.IsAdmin:      false,
