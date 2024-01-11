@@ -31,6 +31,12 @@ func (r *repo) filterByState(list []bson.M, filter FilterEntity) []bson.M {
 		list = append(list, bson.M{
 			fields.State: filter.State,
 		})
+	} else {
+		list = append(list, bson.M{
+			fields.State: bson.M{
+				"$ne": States.Deleted,
+			},
+		})
 	}
 	return list
 }
