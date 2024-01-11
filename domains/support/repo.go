@@ -213,6 +213,17 @@ func (r *repo) AddMessage(ctx context.Context, supportId string, message string,
 		fields.UUID:                id,
 		userField(userFields.UUID): user.UUID,
 		userField(userFields.Name): user.Name,
+		"$or": []bson.M{
+			{
+				fields.State: bson.M{
+					"$ne": States.Closed,
+				},
+			},
+			{
+				fields.State:        States.Closed,
+				fields.IsUserClosed: true,
+			},
+		},
 	}
 	update := bson.M{
 		"$addToSet": bson.M{
