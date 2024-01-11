@@ -225,11 +225,27 @@ func (h srv) SupportAdminFilter(ctx *fiber.Ctx) error {
 }
 
 func (h srv) SupportAdminGet(ctx *fiber.Ctx) error {
-	return nil
+	query := query.SupportAdminGetQuery{}
+	h.parseParams(ctx, &query)
+	res, err := h.app.Queries.SupportAdminGet(ctx.Context(), query)
+	if err != nil {
+		l, a := i18n.GetLanguagesInContext(*h.i18n, ctx)
+		return result.ErrorDetail(h.i18n.TranslateFromError(*err, l, a), err)
+	}
+	return result.SuccessDetail(Messages.Success.Ok, res)
 }
 
 func (h srv) SupportGet(ctx *fiber.Ctx) error {
-	return nil
+	query := query.SupportGetQuery{}
+	h.parseParams(ctx, &query)
+	query.UserUUID = current_user.Parse(ctx).UUID
+	query.UserName = current_account.Parse(ctx).Name
+	res, err := h.app.Queries.SupportGet(ctx.Context(), query)
+	if err != nil {
+		l, a := i18n.GetLanguagesInContext(*h.i18n, ctx)
+		return result.ErrorDetail(h.i18n.TranslateFromError(*err, l, a), err)
+	}
+	return result.SuccessDetail(Messages.Success.Ok, res)
 }
 
 func (h srv) SupportFilter(ctx *fiber.Ctx) error {
