@@ -11,6 +11,7 @@ import (
 	"github.com/turistikrota/service.support/config"
 	"github.com/turistikrota/service.support/domains/contact"
 	"github.com/turistikrota/service.support/domains/feedback"
+	"github.com/turistikrota/service.support/domains/support"
 )
 
 type Config struct {
@@ -28,16 +29,32 @@ func NewApplication(cnf Config) app.Application {
 	feedbackFactory := feedback.NewFactory()
 	feedbackRepo := feedback.NewRepo(cnf.MongoDB.GetCollection(cnf.App.DB.Feedback.Collection), feedbackFactory)
 
+	supportFactory := support.NewFactory()
+	supportRepo := support.NewRepo(cnf.MongoDB.GetCollection(cnf.App.DB.Support.Collection), supportFactory)
+
 	return app.Application{
 		Commands: app.Commands{
-			ContactCreate:  command.NewContactCreateHandler(contactFactory, contactRepo),
-			ContactRead:    command.NewContactReadHandler(contactFactory, contactRepo),
-			FeedbackCreate: command.NewFeedbackCreateHandler(feedbackFactory, feedbackRepo),
-			FeedbackRead:   command.NewFeedbackReadHandler(feedbackFactory, feedbackRepo),
+			ContactCreate:         command.NewContactCreateHandler(contactFactory, contactRepo),
+			ContactRead:           command.NewContactReadHandler(contactFactory, contactRepo),
+			FeedbackCreate:        command.NewFeedbackCreateHandler(feedbackFactory, feedbackRepo),
+			FeedbackRead:          command.NewFeedbackReadHandler(feedbackFactory, feedbackRepo),
+			SupportAdminAddMsg:    command.NewSupportAdminAddMsgHandler(supportRepo),
+			SupportAdminClose:     command.NewSupportAdminCloseHandler(supportRepo),
+			SupportAdminDelete:    command.NewSupportAdminDeleteHandler(supportRepo),
+			SupportAdminRemoveMsg: command.NewSupportAdminRemoveMsgHandler(supportRepo),
+			SupportAdminUpdate:    command.NewSupportAdminUpdateHandler(supportRepo),
+			SupportCreate:         command.NewSupportCreateHandler(supportFactory, supportRepo),
+			SupportAddMsg:         command.NewSupportAddMsgHandler(supportRepo),
+			SupportClose:          command.NewSupportCloseHandler(supportRepo),
+			SupportDelete:         command.NewSupportDeleteHandler(supportRepo),
 		},
 		Queries: app.Queries{
-			ContactList:  query.NewContactListHandler(contactRepo),
-			FeedbackList: query.NewFeedbackListHandler(feedbackRepo),
+			ContactList:        query.NewContactListHandler(contactRepo),
+			FeedbackList:       query.NewFeedbackListHandler(feedbackRepo),
+			SupportAdminFilter: query.NewSupportAdminFilterHandler(supportRepo),
+			SupportAdminGet:    query.NewSupportAdminGetHandler(supportRepo),
+			SupportGet:         query.NewSupportGetHandler(supportRepo),
+			SupportFilter:      query.NewSupportFilterHandler(supportRepo),
 		},
 	}
 }
