@@ -319,6 +319,9 @@ func (r *repo) listOptions(listConfig list.Config) *options.FindOptions {
 	opts.SetSort(bson.M{
 		fields.CreatedAt: -1,
 	})
+	opts.SetProjection(bson.M{
+		fields.Messages: 0,
+	})
 	opts.SetLimit(listConfig.Limit)
 	opts.SetSkip(listConfig.Offset)
 	return opts
