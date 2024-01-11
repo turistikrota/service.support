@@ -88,11 +88,11 @@ func (r *repo) AdminGet(ctx context.Context, uuid string) (*Entity, *i18np.Error
 	filter := bson.M{
 		fields.UUID: id,
 	}
-	res, notFound, _err := r.helper.GetFilter(ctx, filter)
+	res, exists, _err := r.helper.GetFilter(ctx, filter)
 	if _err != nil {
 		return nil, _err
 	}
-	if notFound {
+	if !exists {
 		return nil, r.factory.Errors.NotFound()
 	}
 	return *res, nil
@@ -276,11 +276,11 @@ func (r *repo) Get(ctx context.Context, uuid string, user WithUser) (*Entity, *i
 		userField(userFields.UUID): user.UUID,
 		userField(userFields.Name): user.Name,
 	}
-	res, notFound, _err := r.helper.GetFilter(ctx, filter)
+	res, exists, _err := r.helper.GetFilter(ctx, filter)
 	if _err != nil {
 		return nil, _err
 	}
-	if notFound {
+	if !exists {
 		return nil, r.factory.Errors.NotFound()
 	}
 	return *res, nil

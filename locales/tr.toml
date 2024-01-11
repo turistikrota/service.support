@@ -55,3 +55,7 @@ cache_not_runnable = "Cache çalıştırılamıyor. Konfigürasyonu kontrol edin
 get_query_failed = "Veriler getirilirken bir hata oluştu."
 update_query_not_found = "Güncellenecek veri bulunamadı."
 update_query_failed = "Veri güncellenirken bir hata oluştu."
+
+support_failed = "Destek talebiniz gönderilemedi."
+support_invalid_uuid = "Geçersiz UUID."
+support_not_found = "Destek talebi bulunamadı."
