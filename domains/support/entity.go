@@ -26,12 +26,12 @@ type Interest struct {
 }
 
 type Message struct {
-	UUID      string    `json:"uuid" bson:"uuid"`
-	Text      string    `json:"text" bson:"text"`
-	Interest  *Interest `json:"interest" bson:"interest"`
-	IsAdmin   bool      `json:"is_admin" bson:"is_admin"`
-	IsDeleted bool      `json:"is_deleted" bson:"is_deleted"`
-	Date      time.Time `json:"date" bson:"date"`
+	UUID         string    `json:"uuid" bson:"uuid"`
+	InterestUUID string    `json:"interest_uuid,omitempty" bson:"interest_uuid,omitempty"`
+	Text         string    `json:"text" bson:"text"`
+	IsAdmin      bool      `json:"is_admin" bson:"is_admin"`
+	IsDeleted    bool      `json:"is_deleted" bson:"is_deleted"`
+	Date         time.Time `json:"date" bson:"date"`
 }
 
 type State string

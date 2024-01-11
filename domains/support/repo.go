@@ -6,7 +6,9 @@ import (
 	"github.com/cilloparch/cillop/i18np"
 	"github.com/cilloparch/cillop/types/list"
 	mongo2 "github.com/turistikrota/service.shared/db/mongo"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type WithUser struct {
@@ -101,4 +103,14 @@ func (r *repo) Get(ctx context.Context, uuid string, user WithUser) (*Entity, *i
 
 func (r *repo) Filter(ctx context.Context, user WithUser, filter FilterEntity, listConfig list.Config) (*list.Result[*Entity], *i18np.Error) {
 	return nil, nil
+}
+
+func (r *repo) listOptions(listConfig list.Config) *options.FindOptions {
+	opts := options.Find()
+	opts.SetSort(bson.M{
+		fields.CreatedAt: -1,
+	})
+	opts.SetLimit(listConfig.Limit)
+	opts.SetSkip(listConfig.Offset)
+	return opts
 }
