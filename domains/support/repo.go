@@ -54,7 +54,27 @@ func createEntity() **Entity {
 }
 
 func (r *repo) AdminFilter(ctx context.Context, filter FilterEntity, listConfig list.Config) (*list.Result[*Entity], *i18np.Error) {
-	return nil, nil
+	filters := r.filterToBson(filter)
+	l, err := r.helper.GetListFilter(ctx, filters, r.listOptions(listConfig))
+	if err != nil {
+		return nil, err
+	}
+	filteredCount, _err := r.helper.GetFilterCount(ctx, filters)
+	if _err != nil {
+		return nil, _err
+	}
+	total, _err := r.helper.GetFilterCount(ctx, bson.M{})
+	if _err != nil {
+		return nil, _err
+	}
+	return &list.Result[*Entity]{
+		IsNext:        filteredCount > listConfig.Offset+listConfig.Limit,
+		IsPrev:        listConfig.Offset > 0,
+		FilteredTotal: filteredCount,
+		Total:         total,
+		Page:          listConfig.Offset/listConfig.Limit + 1,
+		List:          l,
+	}, nil
 }
 
 func (r *repo) AdminGet(ctx context.Context, uuid string) (*Entity, *i18np.Error) {
