@@ -87,12 +87,12 @@ func (h srv) Listen() error {
 			router.Post("/feedback", h.currentUserAccess(), h.safeCurrentAccountAccess(), h.rateLimit(), h.wrapWithTimeout(h.FeedbackCreate))
 
 			// support routes
-			router.Post("/support", h.currentUserAccess(), h.currentAccountAccess(), h.rateLimit(), h.wrapWithTimeout(h.SupportCreate))
-			router.Get("/support", h.currentUserAccess(), h.currentAccountAccess(), h.rateLimit(), h.wrapWithTimeout(h.SupportFilter))
-			router.Get("/support/:uuid", h.currentUserAccess(), h.currentAccountAccess(), h.rateLimit(), h.wrapWithTimeout(h.SupportGet))
-			router.Post("/support/:uuid", h.currentUserAccess(), h.currentAccountAccess(), h.rateLimit(), h.wrapWithTimeout(h.SupportAddMsg))
-			router.Patch("/support/:uuid/close", h.currentUserAccess(), h.currentAccountAccess(), h.rateLimit(), h.wrapWithTimeout(h.SupportClose))
-			router.Delete("/support/:uuid", h.currentUserAccess(), h.currentAccountAccess(), h.rateLimit(), h.wrapWithTimeout(h.SupportDelete))
+			router.Post("/", h.currentUserAccess(), h.requiredAccess(), h.currentAccountAccess(), h.rateLimit(), h.wrapWithTimeout(h.SupportCreate))
+			router.Get("/", h.currentUserAccess(), h.requiredAccess(), h.currentAccountAccess(), h.rateLimit(), h.wrapWithTimeout(h.SupportFilter))
+			router.Get("/:uuid", h.currentUserAccess(), h.requiredAccess(), h.currentAccountAccess(), h.rateLimit(), h.wrapWithTimeout(h.SupportGet))
+			router.Post("/:uuid", h.currentUserAccess(), h.requiredAccess(), h.currentAccountAccess(), h.rateLimit(), h.wrapWithTimeout(h.SupportAddMsg))
+			router.Patch("/:uuid/close", h.currentUserAccess(), h.requiredAccess(), h.currentAccountAccess(), h.rateLimit(), h.wrapWithTimeout(h.SupportClose))
+			router.Delete("/:uuid", h.currentUserAccess(), h.requiredAccess(), h.currentAccountAccess(), h.rateLimit(), h.wrapWithTimeout(h.SupportDelete))
 
 			return router
 		},
