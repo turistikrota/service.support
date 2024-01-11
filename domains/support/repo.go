@@ -217,12 +217,11 @@ func (r *repo) AddMessage(ctx context.Context, supportId string, message string,
 	update := bson.M{
 		"$addToSet": bson.M{
 			fields.Messages: bson.M{
-				messageFields.UUID:         uuid.New().String(),
-				messageFields.InterestUUID: user.UUID,
-				messageFields.Text:         message,
-				messageFields.IsAdmin:      false,
-				messageFields.IsDeleted:    false,
-				messageFields.Date:         time.Now(),
+				messageFields.UUID:      uuid.New().String(),
+				messageFields.Text:      message,
+				messageFields.IsAdmin:   false,
+				messageFields.IsDeleted: false,
+				messageFields.Date:      time.Now(),
 			},
 		},
 		"$set": bson.M{
