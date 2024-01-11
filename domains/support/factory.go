@@ -29,12 +29,10 @@ type NewConfig struct {
 func (f Factory) New(cnf NewConfig) *Entity {
 	t := time.Now()
 	firstMessage := &Message{
-		UUID:         uuid.New().String(),
-		InterestUUID: cnf.User.UUID,
-		Text:         cnf.Message,
-		IsAdmin:      false,
-		IsDeleted:    false,
-		Date:         t,
+		UUID:    uuid.New().String(),
+		Text:    cnf.Message,
+		IsAdmin: false,
+		Date:    t,
 	}
 	return &Entity{
 		User:    cnf.User,
