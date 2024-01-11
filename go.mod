@@ -3,8 +3,9 @@ module github.com/turistikrota/service.support
 go 1.20
 
 require (
-	github.com/cilloparch/cillop v0.0.4
+	github.com/cilloparch/cillop v0.0.9
 	github.com/gofiber/fiber/v2 v2.48.0
+	github.com/google/uuid v1.3.1
 	github.com/turistikrota/service.shared v0.0.36
 	go.mongodb.org/mongo-driver v1.12.1
 )
@@ -22,7 +23,6 @@ require (
 	github.com/goccy/go-json v0.10.2 // indirect
 	github.com/golang-jwt/jwt/v4 v4.5.0 // indirect
 	github.com/golang/snappy v0.0.4 // indirect
-	github.com/google/uuid v1.3.1 // indirect
 	github.com/klauspost/compress v1.16.7 // indirect
 	github.com/leodido/go-urn v1.2.4 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
