@@ -182,11 +182,29 @@ func (h srv) SupportAddMsg(ctx *fiber.Ctx) error {
 }
 
 func (h srv) SupportClose(ctx *fiber.Ctx) error {
-	return nil
+	cmd := command.SupportCloseCmd{}
+	h.parseParams(ctx, &cmd)
+	cmd.UserUUID = current_user.Parse(ctx).UUID
+	cmd.UserName = current_account.Parse(ctx).Name
+	res, err := h.app.Commands.SupportClose(ctx.Context(), cmd)
+	if err != nil {
+		l, a := i18n.GetLanguagesInContext(*h.i18n, ctx)
+		return result.Error(h.i18n.TranslateFromError(*err, l, a))
+	}
+	return result.SuccessDetail(Messages.Success.Ok, res)
 }
 
 func (h srv) SupportDelete(ctx *fiber.Ctx) error {
-	return nil
+	cmd := command.SupportDeleteCmd{}
+	h.parseParams(ctx, &cmd)
+	cmd.UserUUID = current_user.Parse(ctx).UUID
+	cmd.UserName = current_account.Parse(ctx).Name
+	res, err := h.app.Commands.SupportDelete(ctx.Context(), cmd)
+	if err != nil {
+		l, a := i18n.GetLanguagesInContext(*h.i18n, ctx)
+		return result.Error(h.i18n.TranslateFromError(*err, l, a))
+	}
+	return result.SuccessDetail(Messages.Success.Ok, res)
 }
 
 func (h srv) SupportAdminFilter(ctx *fiber.Ctx) error {
