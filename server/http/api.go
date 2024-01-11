@@ -221,7 +221,7 @@ func (h srv) SupportAdminFilter(ctx *fiber.Ctx) error {
 		l, a := i18n.GetLanguagesInContext(*h.i18n, ctx)
 		return result.ErrorDetail(h.i18n.TranslateFromError(*err, l, a), err)
 	}
-	return result.SuccessDetail(Messages.Success.Ok, res)
+	return result.SuccessDetail(Messages.Success.Ok, res.List)
 }
 
 func (h srv) SupportAdminGet(ctx *fiber.Ctx) error {
@@ -232,7 +232,7 @@ func (h srv) SupportAdminGet(ctx *fiber.Ctx) error {
 		l, a := i18n.GetLanguagesInContext(*h.i18n, ctx)
 		return result.ErrorDetail(h.i18n.TranslateFromError(*err, l, a), err)
 	}
-	return result.SuccessDetail(Messages.Success.Ok, res)
+	return result.SuccessDetail(Messages.Success.Ok, res.Detail)
 }
 
 func (h srv) SupportGet(ctx *fiber.Ctx) error {
@@ -245,7 +245,7 @@ func (h srv) SupportGet(ctx *fiber.Ctx) error {
 		l, a := i18n.GetLanguagesInContext(*h.i18n, ctx)
 		return result.ErrorDetail(h.i18n.TranslateFromError(*err, l, a), err)
 	}
-	return result.SuccessDetail(Messages.Success.Ok, res)
+	return result.SuccessDetail(Messages.Success.Ok, res.Detail)
 }
 
 func (h srv) SupportFilter(ctx *fiber.Ctx) error {
@@ -263,5 +263,5 @@ func (h srv) SupportFilter(ctx *fiber.Ctx) error {
 		l, a := i18n.GetLanguagesInContext(*h.i18n, ctx)
 		return result.ErrorDetail(h.i18n.TranslateFromError(*err, l, a), err)
 	}
-	return result.SuccessDetail(Messages.Success.Ok, res)
+	return result.SuccessDetail(Messages.Success.Ok, res.List)
 }
