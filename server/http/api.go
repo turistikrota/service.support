@@ -8,6 +8,7 @@ import (
 	"github.com/turistikrota/service.shared/server/http/auth/current_user"
 	"github.com/turistikrota/service.support/app/command"
 	"github.com/turistikrota/service.support/app/query"
+	"github.com/turistikrota/service.support/domains/contact"
 	"github.com/turistikrota/service.support/domains/feedback"
 	"github.com/turistikrota/service.support/domains/support"
 	"github.com/turistikrota/service.support/pkg/utils"
@@ -68,8 +69,11 @@ func (h srv) FeedbackRead(ctx *fiber.Ctx) error {
 func (h srv) ContactList(ctx *fiber.Ctx) error {
 	pagination := utils.Pagination{}
 	h.parseQuery(ctx, &pagination)
+	filter := contact.FilterEntity{}
+	h.parseQuery(ctx, &filter)
 	query := query.ContactListQuery{}
 	query.Pagination = &pagination
+	query.FilterEntity = &filter
 	res, err := h.app.Queries.ContactList(ctx.Context(), query)
 	if err != nil {
 		l, a := i18n.GetLanguagesInContext(*h.i18n, ctx)
