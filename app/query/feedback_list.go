@@ -12,6 +12,7 @@ import (
 
 type FeedbackListQuery struct {
 	*utils.Pagination
+	*feedback.FilterEntity
 }
 
 type FeedbackListRes struct {
@@ -24,7 +25,7 @@ func NewFeedbackListHandler(repo feedback.Repository) FeedbackListHandler {
 	return func(ctx context.Context, query FeedbackListQuery) (*FeedbackListRes, *i18np.Error) {
 		query.Default()
 		offset := (*query.Page - 1) * *query.Limit
-		list, err := repo.List(ctx, list.Config{
+		list, err := repo.List(ctx, *query.FilterEntity, list.Config{
 			Offset: offset,
 			Limit:  *query.Limit,
 		})
