@@ -14,7 +14,7 @@ import (
 type Repository interface {
 	Create(ctx context.Context, entity *Entity) *i18np.Error
 	Read(ctx context.Context, id string) *i18np.Error
-	List(ctx context.Context, listConfig list.Config) (*list.Result[*Entity], *i18np.Error)
+	List(ctx context.Context, filter FilterEntity, listConfig list.Config) (*list.Result[*Entity], *i18np.Error)
 }
 
 type repo struct {
@@ -60,20 +60,20 @@ func (r *repo) Read(ctx context.Context, uuid string) *i18np.Error {
 	return r.helper.UpdateOne(ctx, filter, update)
 }
 
-func (r *repo) List(ctx context.Context, listConfig list.Config) (*list.Result[*Entity], *i18np.Error) {
-	filter := bson.M{}
+func (r *repo) List(ctx context.Context, filter FilterEntity, listConfig list.Config) (*list.Result[*Entity], *i18np.Error) {
+	filters := r.filterToBson(filter)
 	sortOpts := options.Find().SetSort(bson.M{
 		fields.Date: -1,
-	})
-	l, err := r.helper.GetListFilter(ctx, filter, sortOpts)
+	}).SetSkip(listConfig.Offset).SetLimit(listConfig.Limit)
+	l, err := r.helper.GetListFilter(ctx, filters, sortOpts)
 	if err != nil {
 		return nil, err
 	}
-	filtered, _err := r.helper.GetFilterCount(ctx, filter)
+	filtered, _err := r.helper.GetFilterCount(ctx, filters)
 	if _err != nil {
 		return nil, _err
 	}
-	total, _err := r.helper.GetFilterCount(ctx, filter)
+	total, _err := r.helper.GetFilterCount(ctx, bson.M{})
 	if _err != nil {
 		return nil, _err
 	}

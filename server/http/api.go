@@ -85,8 +85,11 @@ func (h srv) ContactList(ctx *fiber.Ctx) error {
 func (h srv) FeedbackList(ctx *fiber.Ctx) error {
 	pagination := utils.Pagination{}
 	h.parseQuery(ctx, &pagination)
+	filter := feedback.FilterEntity{}
+	h.parseQuery(ctx, &filter)
 	query := query.FeedbackListQuery{}
 	query.Pagination = &pagination
+	query.FilterEntity = &filter
 	res, err := h.app.Queries.FeedbackList(ctx.Context(), query)
 	if err != nil {
 		l, a := i18n.GetLanguagesInContext(*h.i18n, ctx)

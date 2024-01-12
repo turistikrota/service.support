@@ -31,3 +31,7 @@ var userFields = userFieldsType{
 	Name:  "name",
 	Email: "email",
 }
+
+func userField(field string) string {
+	return fields.User + "." + field
+}
